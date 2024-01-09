@@ -755,6 +755,7 @@ func (eq *EngineQueue) Reset(ctx context.Context, _ eth.L1BlockRef, _ eth.System
 		return NewTemporaryError(fmt.Errorf("failed to find the L2 Heads to start from: %w", err))
 	}
 	finalized, safe, unsafe := result.Finalized, result.Safe, result.Unsafe
+	log.Info("neo check info ", "unsafe", result.Unsafe, "safe", result.Safe, "finalized", result.Finalized)
 	l1Origin, err := eq.l1Fetcher.L1BlockRefByHash(ctx, safe.L1Origin.Hash)
 	if err != nil {
 		return NewTemporaryError(fmt.Errorf("failed to fetch the new L1 progress: origin: %v; err: %w", safe.L1Origin, err))
@@ -770,6 +771,8 @@ func (eq *EngineQueue) Reset(ctx context.Context, _ eth.L1BlockRef, _ eth.System
 		afterL2Genesis := pipelineL2.Number > eq.cfg.Genesis.L2.Number
 		afterL1Genesis := pipelineL2.L1Origin.Number > eq.cfg.Genesis.L1.Number
 		afterChannelTimeout := pipelineL2.L1Origin.Number+eq.cfg.ChannelTimeout > l1Origin.Number
+		log.Info("neo check info ", "pipelineL2", safe)
+		log.Info("neo check info ", "pipelineL2.L1Origin.Number", pipelineL2.L1Origin.Number, "channelTimeout", eq.cfg.ChannelTimeout, "1Origin.Number", l1Origin.Number)
 		if afterL2Genesis && afterL1Genesis && afterChannelTimeout {
 			parent, err := eq.engine.L2BlockRefByHash(ctx, pipelineL2.ParentHash)
 			if err != nil {
