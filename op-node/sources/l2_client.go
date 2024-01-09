@@ -35,7 +35,6 @@ func L2ClientDefaultConfig(config *rollup.Config, trustRPC bool) *L2ClientConfig
 		span *= 12
 		span /= int(config.BlockTime)
 	}
-	fullSpan := span
 	if span > 1000 { // sanity cap. If a large sequencing window is configured, do not make the cache too large
 		span = 1000
 	}
@@ -45,7 +44,7 @@ func L2ClientDefaultConfig(config *rollup.Config, trustRPC bool) *L2ClientConfig
 			ReceiptsCacheSize:     span,
 			TransactionsCacheSize: span,
 			HeadersCacheSize:      span,
-			PayloadsCacheSize:     4000,
+			PayloadsCacheSize:     span,
 			MaxRequestsPerBatch:   20, // TODO: tune batch param
 			MaxConcurrentRequests: 10,
 			TrustRPC:              trustRPC,
@@ -54,7 +53,7 @@ func L2ClientDefaultConfig(config *rollup.Config, trustRPC bool) *L2ClientConfig
 			MethodResetDuration:   time.Minute,
 		},
 		// Not bounded by span, to cover find-sync-start range fully for speedy recovery after errors.
-		L2BlockRefsCacheSize: fullSpan,
+		L2BlockRefsCacheSize: 4000,
 		L1ConfigsCacheSize:   span,
 		RollupCfg:            config,
 	}
