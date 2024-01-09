@@ -776,6 +776,7 @@ func (eq *EngineQueue) Reset(ctx context.Context, _ eth.L1BlockRef, _ eth.System
 		if afterL2Genesis && afterL1Genesis && afterChannelTimeout {
 			parent, err := eq.engine.L2BlockRefByHash(ctx, pipelineL2.ParentHash)
 			if err != nil {
+				log.Error("neo check error", err)
 				return NewResetError(fmt.Errorf("failed to fetch L2 parent block %s", pipelineL2.ParentID()))
 			}
 			pipelineL2 = parent
